@@ -17,7 +17,32 @@ RUN sed -i 's/@username/'${username}'/' chpasswd
 RUN cat chpasswd | chpasswd
 RUN rm chpasswd
 
-VOLUME /home/ilya/safeplace
+RUN apt-get install -y typespeed hunspell
+RUN apt-get install -y pandoc
+
+ENV user_dir /home/${username}/
+ENV safeplace_dir ${user_dir}safeplace/
+ENV projects_dir ${safeplace_dir}projects/
+ENV config_dir ${safeplace_dir}config/
+
+VOLUME ${safeplace_dir}
+
+WORKDIR ${user_dir}
+
+ADD .emacs .
+
+RUN mkdir .emacs.d && \
+    mkdir -p ${projects_dir}meta-bindings && \
+    touch ${projects_dir}meta-bindings/meta-bindings.el && \
+    ln -s ${projects_dir}meta-bindings/meta-bindings.el \
+          .emacs.d/meta-bindings.el && \
+    mkdir -p ${projects_dir}myemacs && \
+    ln -s ${projects_dir}myemacs \
+          .emacs.d/myemacs && \
+    ln -s ${config_dir}.hunspell_en_US \
+          ${user_dir}.hunspell_en_US && \
+    ln -s ${config_dir}.hunspell_ru_RU \
+          ${user_dir}.hunspell_ru_RU
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
 
