@@ -44,9 +44,11 @@ RUN mkdir .emacs.d && \
     ln -s ${config_dir}.hunspell_ru_RU \
           ${user_dir}.hunspell_ru_RU
 
+ADD html /usr/local/bin
+RUN chmod 755 /usr/local/bin/html
+
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
 
 # TODO: Install latest node.js
 # TODO: Install Oracle JDK 8 https://wiki.debian.org/Java/Sun
 
-    
