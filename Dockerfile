@@ -17,8 +17,7 @@ RUN sed -i 's/@username/'${username}'/' chpasswd
 RUN cat chpasswd | chpasswd
 RUN rm chpasswd
 
-RUN apt-get install -y typespeed hunspell
-RUN apt-get install -y pandoc
+RUN apt-get install -y typespeed hunspell pandoc apg
 
 ENV user_dir /home/${username}/
 ENV safeplace_dir ${user_dir}safeplace/
@@ -30,9 +29,16 @@ VOLUME ${safeplace_dir}
 WORKDIR ${user_dir}
 
 ADD .emacs .
+RUN chown ${username}.${username} .emacs
 
-RUN mkdir .emacs.d && \
-    mkdir -p ${projects_dir}meta-bindings && \
+RUN mkdir .emacs.d && chown ${username}.${username} .emacs.d
+ADD zenburn-theme.el .emacs.d/
+ADD cyrillic-dvorak.el .emacs.d/
+RUN chown ${username}.${username} .emacs.d/cyrillic-dvorak.el
+ADD drools-mode.el .emacs.d/
+RUN chown ${username}.${username} .emacs.d/drools-mode.el
+
+RUN mkdir -p ${projects_dir}meta-bindings && \
     touch ${projects_dir}meta-bindings/meta-bindings.el && \
     ln -s ${projects_dir}meta-bindings/meta-bindings.el \
           .emacs.d/meta-bindings.el && \
@@ -44,8 +50,17 @@ RUN mkdir .emacs.d && \
     ln -s ${config_dir}.hunspell_ru_RU \
           ${user_dir}.hunspell_ru_RU
 
+ADD install-packages.el .
+RUN chmod 755 install-packages.el
+RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
+RUN rm install-packages.el
+
 ADD html /usr/local/bin
 RUN chmod 755 /usr/local/bin/html
+
+RUN echo export TERM=xterm-256color >> /home/${username}/.profile
+
+ENTRYPOINT ["/bin/su", "-l"]
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
 

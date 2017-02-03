@@ -8,7 +8,7 @@
 ;; Load meta-bindings
 (load "~/.emacs.d/meta-bindings.el")
 
-(add-to-list 'load-path ".emacs.d/myemacs")
+(add-to-list 'load-path "~/.emacs.d/myemacs")
 (load "myemacs")
 
 (setenv "PATH" (concat (getenv "PATH") ":" (getenv "HOME") "/bin"))
