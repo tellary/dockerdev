@@ -10,14 +10,14 @@ RUN apt-get install -y \
     emacs-nox less vim \
     curl wget ssh \
     java-package
+RUN apt-get install -y typespeed hunspell pandoc apg
+RUN apt-get install -y hunspell-ru locales
 
 RUN useradd -m -s /bin/bash ${username}
 ADD chpasswd .
 RUN sed -i 's/@username/'${username}'/' chpasswd
 RUN cat chpasswd | chpasswd
 RUN rm chpasswd
-
-RUN apt-get install -y typespeed hunspell pandoc apg
 
 ENV user_dir /home/${username}/
 ENV safeplace_dir ${user_dir}safeplace/
@@ -44,23 +44,28 @@ RUN mkdir -p ${projects_dir}meta-bindings && \
           .emacs.d/meta-bindings.el && \
     mkdir -p ${projects_dir}myemacs && \
     ln -s ${projects_dir}myemacs \
-          .emacs.d/myemacs && \
-    ln -s ${config_dir}.hunspell_en_US \
-          ${user_dir}.hunspell_en_US && \
-    ln -s ${config_dir}.hunspell_ru_RU \
-          ${user_dir}.hunspell_ru_RU
+          .emacs.d/myemacs
 
 ADD install-packages.el .
 RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
 
+RUN ln -s ${config_dir}.hunspell_en_US \
+          ${user_dir}.hunspell_en_US && \
+    ln -s ${config_dir}.hunspell_ru_RU \
+          ${user_dir}.hunspell_ru_RU && \
+    mkdir -p ${projects_dir}/myconfig && \
+    ln -s ${projects_dir}/myconfig/.gitignore \
+          ${user_dir}.gitignore && \
+    ln -s ${projects_dir}/myconfig/.ctags \
+          ${user_dir}.ctags
+
 ADD html /usr/local/bin
 RUN chmod 755 /usr/local/bin/html
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
-RUN apt-get install -y hunspell-ru locales
 RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
 RUN locale-gen
 RUN echo 'LC_ALL=en_US.UTF-8' >> /etc/environment
