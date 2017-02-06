@@ -60,6 +60,13 @@ RUN chmod 755 /usr/local/bin/html
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
+RUN apt-get install -y hunspell-ru locales
+RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
+RUN locale-gen
+RUN echo 'LC_ALL=en_US.UTF-8' >> /etc/environment
+RUN echo 'LANG=en_US.UTF-8' >> /etc/environment
+RUN echo 'LANGUAGE en_US:en' >> /etc/environment
+
 ENTRYPOINT ["/bin/su", "-l"]
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
