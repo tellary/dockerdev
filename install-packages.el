@@ -7,3 +7,4 @@
 (package-install 'column-marker)
 (package-install 'yasnippet)
 (package-install 'markdown-mode)
+(package-install 'dockerfile-mode)
