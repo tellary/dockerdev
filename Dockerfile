@@ -9,10 +9,11 @@ RUN apt-get install -y \
     haskell-platform gnupg2 \
     emacs-nox less vim \
     curl wget ssh \
-    java-package
-RUN apt-get install -y typespeed hunspell pandoc apg
-RUN apt-get install -y hunspell-ru locales
-
+    java-package \
+    typespeed \
+    hunspell hunspell-ru hunspell-en-us \
+    pandoc apg \
+    locales
 RUN useradd -m -s /bin/bash ${username}
 ADD chpasswd .
 RUN sed -i 's/@username/'${username}'/' chpasswd
