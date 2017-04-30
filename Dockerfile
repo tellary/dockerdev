@@ -12,8 +12,19 @@ RUN apt-get install -y \
     java-package \
     typespeed \
     hunspell hunspell-ru hunspell-en-us \
-    pandoc apg \
-    locales
+    apg \
+    locales \
+    sudo
+
+RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
+RUN locale-gen
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+
+RUN cabal update
+RUN cabal install Cabal
+RUN cabal install --global pandoc
+
 RUN useradd -m -s /bin/bash ${username}
 ADD chpasswd .
 RUN sed -i 's/@username/'${username}'/' chpasswd
@@ -66,12 +77,6 @@ ADD html /usr/local/bin
 RUN chmod 755 /usr/local/bin/html
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
-
-RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
-RUN locale-gen
-RUN echo 'LC_ALL=en_US.UTF-8' >> /etc/environment
-RUN echo 'LANG=en_US.UTF-8' >> /etc/environment
-RUN echo 'LANGUAGE en_US:en' >> /etc/environment
 
 ENTRYPOINT ["/bin/su", "-l"]
 
