@@ -13,4 +13,4 @@ else
     BASE=$(echo $1 | sed 's/\.md$//')
 fi
 
-pandoc -o $BASE.html $FILE
+pandoc --standalone --mathjax -o $BASE.html $FILE
