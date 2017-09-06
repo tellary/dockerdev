@@ -88,6 +88,11 @@ RUN mv jdk1.8.* /opt/ && \
             ln -s /opt/jdk1.8.0/bin/$file /usr/local/bin/$file; \
         done;
 
+# TODO: Move ARG definition to the top
+ARG tz='US/Pacific'
+RUN rm /etc/localtime && \
+    ln -s /usr/share/zoneinfo/${tz} /etc/localtime
+
 ENTRYPOINT ["/bin/su", "-l"]
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
