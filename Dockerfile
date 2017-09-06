@@ -26,7 +26,7 @@ RUN cabal install Cabal
 RUN cabal install --global pandoc
 
 RUN useradd -m -s /bin/bash ${username}
-ADD chpasswd .
+ADD chpasswd.use chpasswd
 RUN sed -i 's/@username/'${username}'/' chpasswd
 RUN cat chpasswd | chpasswd
 RUN rm chpasswd
