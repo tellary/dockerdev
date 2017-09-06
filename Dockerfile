@@ -78,6 +78,16 @@ RUN chmod 755 /usr/local/bin/html
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
+# TODO: Remove java-package from apt-get install above
+ADD jdk8.tar.gz .
+RUN mv jdk1.8.* /opt/ && \
+    ln -s /opt/jdk1.8.* /opt/jdk1.8.0 && \
+    ls /opt/jdk1.8.0/bin | \
+        while read file; \
+        do \
+            ln -s /opt/jdk1.8.0/bin/$file /usr/local/bin/$file; \
+        done;
+
 ENTRYPOINT ["/bin/su", "-l"]
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
