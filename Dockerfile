@@ -80,6 +80,11 @@ RUN chmod 755 /usr/local/bin/html
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
+# TODO: Move to other LANG commands
+RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
+RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
+RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
+
 # TODO: Remove java-package from apt-get install above
 ADD jdk8.tar.gz .
 RUN mv jdk1.8.* /opt/ && \
