@@ -1,6 +1,7 @@
 FROM debian
 
 ARG username=ilya
+ARG tz='US/Pacific'
 
 RUN sed -i 's/main/main contrib/' /etc/apt/sources.list
 RUN apt-get update
@@ -9,7 +10,6 @@ RUN apt-get install -y \
     haskell-platform gnupg2 \
     emacs-nox less vim \
     curl wget ssh \
-    java-package \
     typespeed \
     hunspell hunspell-ru hunspell-en-us \
     apg \
@@ -20,6 +20,9 @@ RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
 RUN locale-gen
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
+RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
+RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
+RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
 
 RUN cabal update
 RUN cabal install Cabal
@@ -80,12 +83,6 @@ RUN chmod 755 /usr/local/bin/html
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
-# TODO: Move to other LANG commands
-RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
-RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
-RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
-
-# TODO: Remove java-package from apt-get install above
 ADD jdk8.tar.gz .
 RUN mv jdk1.8.* /opt/ && \
     ln -s /opt/jdk1.8.* /opt/jdk1.8.0 && \
@@ -95,8 +92,6 @@ RUN mv jdk1.8.* /opt/ && \
             ln -s /opt/jdk1.8.0/bin/$file /usr/local/bin/$file; \
         done;
 
-# TODO: Move ARG definition to the top
-ARG tz='US/Pacific'
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
 
