@@ -70,6 +70,8 @@ RUN ln -s ${config_dir}.hunspell_en_US \
     mkdir -p ${projects_dir}/myconfig && \
     ln -s ${projects_dir}/myconfig/.gitignore \
           ${user_dir}.gitignore && \
+    ln -s ${config_dir}.gitconfig \
+          ${user_dir}.gitconfig && \          
     ln -s ${projects_dir}/myconfig/.ctags \
           ${user_dir}.ctags
 
