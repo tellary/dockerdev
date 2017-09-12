@@ -95,6 +95,10 @@ RUN mv jdk1.8.* /opt/ && \
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
 
+# TODO merge into apt-get install above
+RUN apt-get install -y \
+    man netcat
+
 ENTRYPOINT ["/bin/su", "-l"]
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
