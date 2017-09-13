@@ -14,7 +14,10 @@ RUN apt-get install -y \
     hunspell hunspell-ru hunspell-en-us \
     apg \
     locales \
-    sudo
+    sudo \
+    man netcat \
+    apt-file
+RUN apt-file update
 
 RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
 RUN locale-gen
@@ -94,10 +97,6 @@ RUN mv jdk1.8.* /opt/ && \
 
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
-
-# TODO merge into apt-get install above
-RUN apt-get install -y \
-    man netcat
 
 ENTRYPOINT ["/bin/su", "-l"]
 
