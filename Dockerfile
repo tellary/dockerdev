@@ -98,6 +98,10 @@ RUN mv jdk1.8.* /opt/ && \
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
 
+# TODO move to the above
+RUN apt-get install -y \
+    emacs-goodies-el
+
 ENTRYPOINT ["/bin/su", "-l"]
 
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
