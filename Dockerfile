@@ -100,10 +100,14 @@ RUN rm /etc/localtime && \
 
 # TODO move to the above
 RUN apt-get install -y \
-    emacs-goodies-el
+    emacs-goodies-el \
+    strace \
+    pinentry-tty
+# pinentry-curses doesn't work in emacs
+RUN apt-get remove -y pinentry-curses
 
-ENTRYPOINT ["/bin/su", "-l"]
-
+ENTRYPOINT ["bash"]
+CMD ["-l"]
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
 
 # TODO: Install latest node.js
