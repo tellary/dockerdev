@@ -106,7 +106,7 @@ RUN apt-get install -y \
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 # RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
 
