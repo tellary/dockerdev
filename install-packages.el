@@ -8,3 +8,6 @@
 (package-install 'yasnippet)
 (package-install 'markdown-mode)
 (package-install 'dockerfile-mode)
+(package-install 'xclip)
+(package-install 'haskell-mode)
+(package-install 'haskell-snippets)

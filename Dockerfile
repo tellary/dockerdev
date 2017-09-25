@@ -102,7 +102,10 @@ RUN rm /etc/localtime && \
 RUN apt-get install -y \
     emacs-goodies-el \
     strace \
-    pinentry-tty
+    pinentry-tty \
+    jq \
+    xterm xsel xclip \
+    net-tools
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
 
