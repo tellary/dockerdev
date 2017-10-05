@@ -87,6 +87,7 @@ RUN chmod 755 /usr/local/bin/html
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
 ADD jdk8.tar.gz .
+# TODO: Symlink to jdk1.8 but not jdk1.8.0
 RUN mv jdk1.8.* /opt/ && \
     ln -s /opt/jdk1.8.* /opt/jdk1.8.0 && \
     ls /opt/jdk1.8.0/bin | \
@@ -108,6 +109,14 @@ RUN apt-get install -y \
     net-tools
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
+
+# TODO move
+RUN apt-get install -y zip unzip
+COPY gradle4.zip .
+RUN unzip gradle4.zip && rm -f gradle4.zip && \
+    mv gradle-4.* /opt/ && \
+    ln -s /opt/gradle-4.* /opt/gradle-4 && \
+    ln -s /opt/gradle-4/bin/gradle /usr/local/bin/gradle;
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
