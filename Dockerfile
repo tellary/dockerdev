@@ -112,16 +112,32 @@ RUN apt-get remove -y pinentry-curses
 
 # TODO move
 RUN apt-get install -y zip unzip
-COPY gradle4.zip .
+# TODO add hash sum verification
+RUN curl -L -o gradle4.zip https://services.gradle.org/distributions/gradle-4.2.1-bin.zip
 RUN unzip gradle4.zip && rm -f gradle4.zip && \
     mv gradle-4.* /opt/ && \
     ln -s /opt/gradle-4.* /opt/gradle-4 && \
     ln -s /opt/gradle-4/bin/gradle /usr/local/bin/gradle;
 
+ARG nodejs_version=8.7.0
+ENV nodejs_dir=node-v${nodejs_version}-linux-x64
+ENV nodejs_file=${nodejs_dir}.tar.xz
+
+RUN curl -L -o $nodejs_file http://nodejs.org/dist/v8.7.0/$nodejs_file
+COPY nodejs_shasums256.txt.asc .
+RUN EXPECTED_HASH=$( \
+        grep ${nodejs_file} nodejs_shasums256.txt.asc | \
+            cut -f 1 -d ' ') && \
+    ACTUAL_HASH=$(sha256sum $nodejs_file | cut -f 1 -d ' ') && \
+    [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
+    tar xf $nodejs_file && \
+    mv $nodejs_dir /opt && \
+    ls /opt/$nodejs_dir/bin | \
+        while read file; \
+        do \
+            ln -s /opt/$nodejs_dir/bin/$file /usr/local/bin/$file; \
+        done;
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
-# RUN curl https://nodejs.org/dist/v7.3.0/node-v7.3.0.pkg
-
-# TODO: Install latest node.js
-# TODO: Install Oracle JDK 8 https://wiki.debian.org/Java/Sun
 
