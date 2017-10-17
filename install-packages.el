@@ -11,3 +11,5 @@
 (package-install 'xclip)
 (package-install 'haskell-mode)
 (package-install 'haskell-snippets)
+(package-install 'groovy-mode)
+(package-install 'gradle-mode)
