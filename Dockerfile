@@ -87,13 +87,12 @@ RUN chmod 755 /usr/local/bin/html
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
 ADD jdk8.tar.gz .
-# TODO: Symlink to jdk1.8 but not jdk1.8.0
 RUN mv jdk1.8.* /opt/ && \
-    ln -s /opt/jdk1.8.* /opt/jdk1.8.0 && \
-    ls /opt/jdk1.8.0/bin | \
+    ln -s /opt/jdk1.8.* /opt/jdk1.8 && \
+    ls /opt/jdk1.8/bin | \
         while read file; \
         do \
-            ln -s /opt/jdk1.8.0/bin/$file /usr/local/bin/$file; \
+            ln -s /opt/jdk1.8/bin/$file /usr/local/bin/$file; \
         done;
 
 RUN rm /etc/localtime && \
@@ -106,12 +105,11 @@ RUN apt-get install -y \
     pinentry-tty \
     jq \
     xterm xsel xclip \
-    net-tools
+    net-tools \
+    zip unzip
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
 
-# TODO move
-RUN apt-get install -y zip unzip
 # TODO add hash sum verification
 RUN curl -L -o gradle4.zip https://services.gradle.org/distributions/gradle-4.2.1-bin.zip
 RUN unzip gradle4.zip && rm -f gradle4.zip && \
