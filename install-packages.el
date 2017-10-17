@@ -13,3 +13,5 @@
 (package-install 'haskell-snippets)
 (package-install 'groovy-mode)
 (package-install 'gradle-mode)
+(package-install 'nodejs-repl)
+(package-install 'typescript-mode)
