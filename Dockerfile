@@ -133,6 +133,9 @@ RUN EXPECTED_HASH=$( \
             ln -s /opt/$nodejs_dir/bin/$file /usr/local/bin/$file; \
         done;
 
+# TODO move above
+RUN apt-get install -y time exuberant-ctags
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
