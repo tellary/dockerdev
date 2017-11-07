@@ -16,7 +16,16 @@ RUN apt-get install -y \
     locales \
     sudo \
     man netcat \
-    apt-file
+    apt-file \
+    emacs-goodies-el \
+    strace \
+    pinentry-tty \
+    jq \
+    xterm xsel xclip \
+    net-tools \
+    zip unzip
+# pinentry-curses doesn't work in emacs
+RUN apt-get remove -y pinentry-curses
 RUN apt-file update
 
 RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
@@ -97,18 +106,6 @@ RUN mv jdk1.8.* /opt/ && \
 
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
-
-# TODO move to the above
-RUN apt-get install -y \
-    emacs-goodies-el \
-    strace \
-    pinentry-tty \
-    jq \
-    xterm xsel xclip \
-    net-tools \
-    zip unzip
-# pinentry-curses doesn't work in emacs
-RUN apt-get remove -y pinentry-curses
 
 # TODO add hash sum verification
 RUN curl -L -o gradle4.zip https://services.gradle.org/distributions/gradle-4.2.1-bin.zip
