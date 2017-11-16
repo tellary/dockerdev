@@ -5,4 +5,5 @@ docker run -it \
        -v /Users/ilya/Downloads:/home/ilya/Downloads \
        -u ilya \
        -e DISPLAY=123.123.123.123:0 \
+       --rm \
        work
