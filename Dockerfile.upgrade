@@ -1,0 +1,5 @@
+FROM prev_work
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    cabal update && \
+    apt-file update
