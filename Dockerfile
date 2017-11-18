@@ -5,6 +5,8 @@ ARG tz='US/Pacific'
 
 RUN sed -i 's/main/main contrib/' /etc/apt/sources.list
 RUN apt-get update
+RUN apt-get upgrade -y
+# TODO: Split these into several commands
 RUN apt-get install -y \
     python git git-doc git-man \
     haskell-platform gnupg2 \
@@ -23,7 +25,8 @@ RUN apt-get install -y \
     jq \
     xterm xsel xclip \
     net-tools \
-    zip unzip
+    zip unzip \
+    time exuberant-ctags
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
 RUN apt-file update
@@ -132,9 +135,6 @@ RUN EXPECTED_HASH=$( \
         do \
             ln -s /opt/$nodejs_dir/bin/$file /usr/local/bin/$file; \
         done;
-
-# TODO move above
-RUN apt-get install -y time exuberant-ctags
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
