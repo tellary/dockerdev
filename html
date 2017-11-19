@@ -15,4 +15,4 @@ else
     BASE=$(echo $1 | sed 's/\.md$//')
 fi
 
-pandoc -S --standalone --mathjax -o $BASE.html $FILE
+pandoc -f markdown+smart --standalone --mathjax -o $BASE.html $FILE
