@@ -136,6 +136,9 @@ RUN EXPECTED_HASH=$( \
             ln -s /opt/$nodejs_dir/bin/$file /usr/local/bin/$file; \
         done;
 
+# TODO: Merge with the above
+RUN apt-get install -y libdatetime-perl libdatetime-format-strptime-perl
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
