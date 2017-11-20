@@ -139,6 +139,9 @@ RUN EXPECTED_HASH=$( \
 # TODO: Merge with the above
 RUN apt-get install -y libdatetime-perl libdatetime-format-strptime-perl
 
+# TODO: Move up to the useradd above
+RUN usermod -aG sudo ${username}
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
