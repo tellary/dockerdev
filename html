@@ -15,4 +15,6 @@ else
     BASE=$(echo $1 | sed 's/\.md$//')
 fi
 
-pandoc --quiet -f markdown+smart --standalone --mathjax -o $BASE.html $FILE
+pandoc --quiet -f markdown+smart --standalone --mathjax \
+       --filter pandoc-plantuml-filter \
+       -o $BASE.html $FILE 

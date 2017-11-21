@@ -144,6 +144,16 @@ RUN apt-get install -y libdatetime-perl libdatetime-format-strptime-perl
 # TODO: Move up to the useradd above
 RUN usermod -aG sudo ${username}
 
+ADD plantuml /usr/local/bin/plantuml
+ADD plantuml.1.2017.19.jar /usr/local/bin/plantuml.jar
+# TODO: Merge with the above
+RUN apt-get install -y graphviz
+RUN chmod 755 /usr/local/bin/plantuml && \
+    git clone https://github.com/jodonoghue/pandoc-plantuml-filter.git && \
+    cd pandoc-plantuml-filter && \
+    cabal install --global && \
+    cd .. && rm -rf pandoc-plantuml-filter
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
