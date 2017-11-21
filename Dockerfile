@@ -130,11 +130,13 @@ RUN EXPECTED_HASH=$( \
     [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
     tar xf $nodejs_file && \
     mv $nodejs_dir /opt && \
-    ls /opt/$nodejs_dir/bin | \
+    (ls /opt/$nodejs_dir/bin | \
         while read file; \
         do \
             ln -s /opt/$nodejs_dir/bin/$file /usr/local/bin/$file; \
-        done;
+        done;) && \
+    rm $nodejs_file && \
+    rm nodejs_shasums256.txt.asc
 
 # TODO: Merge with the above
 RUN apt-get install -y libdatetime-perl libdatetime-format-strptime-perl
