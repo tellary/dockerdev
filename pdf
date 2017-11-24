@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z $1 ]
+then
+    echo "usage pdf <file>.[md]"
+    exit 1
+fi
+
+if ! echo $1 | egrep '\md$' > /dev/null
+then
+    FILE=$1md
+    BASE=${1:0: -1}
+else
+    FILE=$1
+    BASE=$(echo $1 | sed 's/\.md$//')
+fi
+
+pandoc --quiet -f markdown+smart --standalone --mathjax \
+       --variable=geometry:a4paper,margin=2cm \
+       --filter pandoc-plantuml-filter \
+       -o $BASE.pdf $FILE 

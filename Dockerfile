@@ -154,6 +154,14 @@ RUN chmod 755 /usr/local/bin/plantuml && \
     cabal install --global && \
     cd .. && rm -rf pandoc-plantuml-filter
 
+# TODO: Merge with the above
+RUN apt-get install -y \
+    texlive-latex-base \
+    texlive-fonts-recommended
+# TODO: Move up where `html` is handled
+ADD pdf /usr/local/bin
+RUN chmod 755 /usr/local/bin/pdf
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
