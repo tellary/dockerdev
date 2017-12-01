@@ -6,4 +6,5 @@ docker run -it \
        -u ilya \
        -e DISPLAY=123.123.123.123:0 \
        --rm \
+       $@ \
        work

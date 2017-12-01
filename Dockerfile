@@ -162,6 +162,10 @@ RUN apt-get install -y \
 ADD pdf /usr/local/bin
 RUN chmod 755 /usr/local/bin/pdf
 
+# TODO: Move up where Gradle is installed
+ADD init_gradle.sh .
+RUN sudo -u ${username} bash init_gradle.sh && rm init_gradle.sh
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
