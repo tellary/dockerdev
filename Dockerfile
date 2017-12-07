@@ -158,6 +158,8 @@ RUN chmod 755 /usr/local/bin/plantuml && \
 RUN apt-get install -y \
     texlive-latex-base \
     texlive-fonts-recommended
+RUN apt-get install -y \
+    texlive-latex-recommended
 # TODO: Move up where `html` is handled
 ADD pdf /usr/local/bin
 RUN chmod 755 /usr/local/bin/pdf
