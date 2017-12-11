@@ -76,11 +76,6 @@ RUN mkdir -p ${projects_dir}meta-bindings && \
     ln -s ${projects_dir}myemacs \
           .emacs.d/myemacs
 
-ADD install-packages.el .
-RUN chmod 755 install-packages.el
-RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
-RUN rm install-packages.el
-
 RUN ln -s ${config_dir}.hunspell_en_US \
           ${user_dir}.hunspell_en_US && \
     ln -s ${config_dir}.hunspell_ru_RU \
@@ -95,6 +90,8 @@ RUN ln -s ${config_dir}.hunspell_en_US \
 
 ADD html /usr/local/bin
 RUN chmod 755 /usr/local/bin/html
+ADD pdf /usr/local/bin
+RUN chmod 755 /usr/local/bin/pdf
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
@@ -160,9 +157,17 @@ RUN apt-get install -y \
     texlive-fonts-recommended
 RUN apt-get install -y \
     texlive-latex-recommended
-# TODO: Move up where `html` is handled
-ADD pdf /usr/local/bin
-RUN chmod 755 /usr/local/bin/pdf
+
+RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/download/v0.11.7/linux64.tar.gz && \
+    tar xf linux64.tar.gz && \
+    mv purescript/purs /usr/local/bin && \
+    npm install -g --prefix /usr/local pulp bower && \
+    rm -rf purescript && rm linux64.tar.gz
+
+ADD install-packages.el .
+RUN chmod 755 install-packages.el
+RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
+RUN rm install-packages.el
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
