@@ -6,27 +6,36 @@ ARG tz='US/Pacific'
 RUN sed -i 's/main/main contrib/' /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get upgrade -y
-# TODO: Split these into several commands
 RUN apt-get install -y \
     python git git-doc git-man \
-    haskell-platform gnupg2 \
-    emacs-nox less vim \
+    gnupg2 \
+    emacs-nox emacs-goodies-el \
+    less vim \
     curl wget ssh \
     typespeed \
     hunspell hunspell-ru hunspell-en-us \
+    libdatetime-perl libdatetime-format-strptime-perl
+RUN apt-get install -y \    
     apg \
     locales \
     sudo \
     man netcat \
     apt-file \
-    emacs-goodies-el \
     strace \
     pinentry-tty \
     jq \
     xterm xsel xclip \
     net-tools \
     zip unzip \
-    time exuberant-ctags
+    time exuberant-ctags \
+    graphviz
+RUN apt-get install -y \
+    haskell-platform
+RUN apt-get install -y \
+    texlive-latex-base \
+    texlive-fonts-recommended
+RUN apt-get install -y \
+    texlive-latex-recommended
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
 RUN apt-file update
@@ -44,6 +53,7 @@ RUN cabal install Cabal
 RUN cabal install --global pandoc
 
 RUN useradd -m -s /bin/bash ${username}
+RUN usermod -aG sudo ${username}
 ADD chpasswd.use chpasswd
 RUN sed -i 's/@username/'${username}'/' chpasswd
 RUN cat chpasswd | chpasswd
@@ -135,28 +145,13 @@ RUN EXPECTED_HASH=$( \
     rm $nodejs_file && \
     rm nodejs_shasums256.txt.asc
 
-# TODO: Merge with the above
-RUN apt-get install -y libdatetime-perl libdatetime-format-strptime-perl
-
-# TODO: Move up to the useradd above
-RUN usermod -aG sudo ${username}
-
 ADD plantuml /usr/local/bin/plantuml
 ADD plantuml.1.2017.19.jar /usr/local/bin/plantuml.jar
-# TODO: Merge with the above
-RUN apt-get install -y graphviz
 RUN chmod 755 /usr/local/bin/plantuml && \
     git clone https://github.com/jodonoghue/pandoc-plantuml-filter.git && \
     cd pandoc-plantuml-filter && \
     cabal install --global && \
     cd .. && rm -rf pandoc-plantuml-filter
-
-# TODO: Merge with the above
-RUN apt-get install -y \
-    texlive-latex-base \
-    texlive-fonts-recommended
-RUN apt-get install -y \
-    texlive-latex-recommended
 
 RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/download/v0.11.7/linux64.tar.gz && \
     tar xf linux64.tar.gz && \
