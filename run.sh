@@ -8,6 +8,5 @@ docker run -it \
        -v ~/.ssh:/home/ilya/.ssh \
        -u ilya \
        -e DISPLAY=123.123.123.123:0 \
-       --rm \
        $@ \
        work
