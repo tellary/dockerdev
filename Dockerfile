@@ -164,6 +164,8 @@ RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
 
+COPY ssh-agent.sh /etc/profile.d/
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
