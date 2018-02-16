@@ -4,7 +4,6 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-(package-install 'column-marker)
 (package-install 'yasnippet)
 (package-install 'markdown-mode)
 (package-install 'dockerfile-mode)
@@ -15,5 +14,4 @@
 (package-install 'gradle-mode)
 (package-install 'nodejs-repl)
 (package-install 'typescript-mode)
-(package-install 'etags-select)
 (package-install 'purescript-mode)

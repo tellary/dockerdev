@@ -159,14 +159,14 @@ RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/
     npm install -g --prefix /usr/local pulp bower && \
     rm -rf purescript && rm linux64.tar.gz
 
+COPY ssh-agent.sh /etc/profile.d/
+
+RUN apt-get install -y python-pandas ipython
+
 ADD install-packages.el .
 RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
-
-COPY ssh-agent.sh /etc/profile.d/
-
-RUN apt-get install -y python-pandas ipython
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
