@@ -15,3 +15,7 @@
 (package-install 'nodejs-repl)
 (package-install 'typescript-mode)
 (package-install 'purescript-mode)
+(package-install 'json-mode)
+(package-install 'jsonnet-mode)
+(package-install 'php-mode)
+(package-install 'yaml-mode)
