@@ -166,6 +166,8 @@ RUN rm install-packages.el
 
 COPY ssh-agent.sh /etc/profile.d/
 
+RUN apt-get install -y python-pandas ipython
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
