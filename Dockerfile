@@ -168,6 +168,9 @@ RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
 
+ADD findtags /usr/local/bin
+RUN chmod 755 /usr/local/bin/findtags
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 

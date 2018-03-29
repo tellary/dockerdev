@@ -1,0 +1,11 @@
+#!/bin/bash
+
+APPEND=$1
+if [ "$APPEND" = "-a" ]
+then
+    shift 1
+else
+    APPEND=""
+fi
+
+find $@ | ctags $APPEND -e -L -
