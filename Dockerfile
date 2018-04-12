@@ -171,6 +171,10 @@ RUN rm install-packages.el
 ADD findtags /usr/local/bin
 RUN chmod 755 /usr/local/bin/findtags
 
+RUN sudo npm install -global markdown2confluence
+ADD conf /usr/local/bin
+RUN chmod 755 /usr/local/bin/conf
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
