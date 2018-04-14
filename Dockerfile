@@ -29,8 +29,8 @@ RUN apt-get install -y \
     zip unzip \
     time exuberant-ctags \
     graphviz
-RUN apt-get install -y \
-    haskell-platform
+# RUN apt-get install -y \
+#    haskell-platform    
 RUN apt-get install -y \
     texlive-latex-base \
     texlive-fonts-recommended
@@ -48,17 +48,6 @@ RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
 
-RUN cabal update
-RUN cabal install Cabal
-RUN cabal install --global pandoc
-
-RUN useradd -m -s /bin/bash ${username}
-RUN usermod -aG sudo ${username}
-ADD chpasswd.use chpasswd
-RUN sed -i 's/@username/'${username}'/' chpasswd
-RUN cat chpasswd | chpasswd
-RUN rm chpasswd
-
 ENV user_dir /home/${username}/
 ENV safeplace_dir ${user_dir}safeplace/
 ENV projects_dir ${safeplace_dir}projects/
@@ -67,6 +56,28 @@ ENV config_dir ${safeplace_dir}config/
 VOLUME ${safeplace_dir}
 
 WORKDIR ${user_dir}
+
+RUN mkdir haskell-platform && curl -L -o haskell-platform/haskell-platform.tar.gz \
+    https://haskell.org/platform/download/8.2.2/haskell-platform-8.2.2-unknown-posix--core-x86_64.tar.gz
+RUN EXPECTED_HASH=bd01bf2b34ea3d91b1c82059197bb2e307e925e0cb308cb771df45c798632b58 \
+    ACTUAL_HASH=$(sha256sum haskell-platform/haskell-platform.tar.gz | cut -f 1 -d ' ') && \
+    [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
+    cd haskell-platform && \
+    tar xf haskell-platform.tar.gz && \
+    ./install-haskell-platform.sh && \
+    cd .. && rm -rf haskell-platform
+# TODO move `apt-get install` above
+RUN apt-get install -y pkg-config gcc libgmp-dev
+RUN cabal update
+# RUN cabal install Cabal
+# RUN cabal install --global pandoc-2.1.1
+
+RUN useradd -m -s /bin/bash ${username}
+RUN usermod -aG sudo ${username}
+ADD chpasswd.use chpasswd
+RUN sed -i 's/@username/'${username}'/' chpasswd
+RUN cat chpasswd | chpasswd
+RUN rm chpasswd
 
 ADD .emacs .
 RUN chown ${username}.${username} .emacs
@@ -147,11 +158,11 @@ RUN EXPECTED_HASH=$( \
 
 ADD plantuml /usr/local/bin/plantuml
 ADD plantuml.1.2017.19.jar /usr/local/bin/plantuml.jar
-RUN chmod 755 /usr/local/bin/plantuml && \
-    git clone https://github.com/jodonoghue/pandoc-plantuml-filter.git && \
-    cd pandoc-plantuml-filter && \
-    cabal install --global && \
-    cd .. && rm -rf pandoc-plantuml-filter
+# RUN chmod 755 /usr/local/bin/plantuml && \
+#   git clone https://github.com/jodonoghue/pandoc-plantuml-filter.git && \
+#    cd pandoc-plantuml-filter && \
+#    cabal install --global && \
+#    cd .. && rm -rf pandoc-plantuml-filter
 
 RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/download/v0.11.7/linux64.tar.gz && \
     tar xf linux64.tar.gz && \
