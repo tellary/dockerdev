@@ -189,6 +189,9 @@ RUN sudo npm install -global markdown2confluence
 ADD conf /usr/local/bin
 RUN chmod 755 /usr/local/bin/conf
 
+ADD mdunwrap /usr/local/bin
+RUN chmod 755 /usr/local/bin/mdunwrap
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 

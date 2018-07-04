@@ -2,7 +2,7 @@
 
 if [ -z $1 ]
 then
-    echo "usage conf <file>.[md]"
+    echo "usage mdunrwap <file>.[md]"
     exit 1
 fi
 
@@ -15,9 +15,8 @@ else
     BASE=$(echo $1 | sed 's/\.md$//')
 fi
 
-# Removing line wraps
 out=$(mktemp)
 pandoc -f markdown -t html $FILE | pandoc -f html -t markdown --wrap=none > $out
-/opt/node-v8.7.0-linux-x64/bin/markdown2confluence $out
+cat $out
 
 trap "rm $out" EXIT INT TERM
