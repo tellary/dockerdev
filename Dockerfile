@@ -177,11 +177,6 @@ RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/
 
 COPY ssh-agent.sh /etc/profile.d/
 
-ADD install-packages.el .
-RUN chmod 755 install-packages.el
-RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
-RUN rm install-packages.el
-
 ADD findtags /usr/local/bin
 RUN chmod 755 /usr/local/bin/findtags
 
@@ -191,6 +186,11 @@ RUN chmod 755 /usr/local/bin/conf
 
 ADD mdunwrap /usr/local/bin
 RUN chmod 755 /usr/local/bin/mdunwrap
+
+ADD install-packages.el .
+RUN chmod 755 install-packages.el
+RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
+RUN rm install-packages.el
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
