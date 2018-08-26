@@ -192,6 +192,9 @@ RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
 
+ADD get-maven-source.pl /usr/local/bin/get-maven-source
+RUN chmod 755 /usr/local/bin/get-maven-source
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
