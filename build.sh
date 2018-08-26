@@ -1,4 +1,6 @@
-docker images | egrep 'work ' && \
-    docker tag work work.$(date +%Y%m%d_%H%M%S)
+. config.sh
 
-docker build -t work .
+docker images | egrep "$WORK_IMAGE " && \
+    docker tag $WORK_IMAGE $WORK_IMAGE.$(date +%Y%m%d_%H%M%S)
+
+docker build -t $WORK_IMAGE .

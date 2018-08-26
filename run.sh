@@ -1,3 +1,4 @@
+. config.sh
 . common-run.sh
 
 docker run -it $DOCKER_OPTS \
@@ -5,4 +6,4 @@ docker run -it $DOCKER_OPTS \
        -v dot-gradle:/home/ilya/.gradle \
        -u ilya \
        $@ \
-       work
+       $WORK_IMAGE

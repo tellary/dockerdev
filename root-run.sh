@@ -1,6 +1,7 @@
+. config.sh
 . common-run.sh
 
 docker run -it $DOCKER_OPTS \
        --rm \
        $@ \
-       work
+       $WORK_IMAGE

@@ -1,4 +1,5 @@
-docker tag work prev_work &&
-docker build -t work -f Dockerfile.upgrade . &&
-docker tag work prev_work &&
+. config.sh
+
+docker tag $WORK_IMAGE prev_work &&
+docker build -t $WORK_IMAGE -f Dockerfile.upgrade . &&
 docker rmi prev_work
