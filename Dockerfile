@@ -195,6 +195,13 @@ RUN rm install-packages.el
 ADD get-maven-source.pl /usr/local/bin/get-maven-source
 RUN chmod 755 /usr/local/bin/get-maven-source
 
+RUN  apt-get update && sudo apt-get install -y apt-transport-https && \
+     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+         apt-key add - && \
+     echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
+         tee -a /etc/apt/sources.list.d/kubernetes.list && \
+     apt-get update && apt-get install -y kubectl=1.6.1-00 && \
+     apt-mark hold kubectl
 # TODO move to apt-get
 RUN apt-get install -y make
 
