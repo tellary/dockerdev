@@ -195,6 +195,9 @@ RUN rm install-packages.el
 ADD get-maven-source.pl /usr/local/bin/get-maven-source
 RUN chmod 755 /usr/local/bin/get-maven-source
 
+# TODO move to apt-get
+RUN apt-get install -y make
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
