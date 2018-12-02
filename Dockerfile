@@ -197,6 +197,14 @@ RUN chmod 755 /usr/local/bin/get-maven-source
 
 # TODO move to apt-get
 RUN apt-get install -y make
+RUN curl -L -o anki.tar.bz2 https://apps.ankiweb.net/downloads/current/anki-2.1.5-linux-amd64.tar.bz2 && \
+    tar xf anki.tar.bz2 && \
+    mv anki-* anki && \
+    cd anki/ && make install && \
+    cd .. && rm -rf anki*
+# TODO move to apt-get
+RUN apt-get install -y \
+    libxcb-xfixes0 libwayland-client0 libwayland-server0
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
