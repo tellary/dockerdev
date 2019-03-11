@@ -204,6 +204,9 @@ RUN  apt-get update && sudo apt-get install -y apt-transport-https && \
      apt-mark hold kubectl
 # TODO move to apt-get
 RUN apt-get install -y make
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    pip3 install awscli==1.16.121 --root / --compile
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
