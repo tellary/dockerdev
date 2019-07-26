@@ -208,6 +208,13 @@ RUN apt-get update && \
     apt-get install -y python3-pip && \
     pip3 install awscli==1.16.121 --root / --compile
 
+RUN wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.16.0/pmd-bin-6.16.0.zip && \
+    unzip pmd-bin-6.16.0.zip && \
+    mv pmd-bin-6.16.0 /opt && \
+    rm pmd-bin-6.16.0.zip
+ADD pmd.sh /usr/local/bin/pmd
+RUN chmod 755 /usr/local/bin/pmd
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
 
