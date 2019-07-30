@@ -187,11 +187,6 @@ RUN chmod 755 /usr/local/bin/conf
 ADD mdunwrap /usr/local/bin
 RUN chmod 755 /usr/local/bin/mdunwrap
 
-ADD install-packages.el .
-RUN chmod 755 install-packages.el
-RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
-RUN rm install-packages.el
-
 ADD get-maven-source.pl /usr/local/bin/get-maven-source
 RUN chmod 755 /usr/local/bin/get-maven-source
 
@@ -207,6 +202,11 @@ RUN apt-get install -y make
 RUN apt-get update && \
     apt-get install -y python3-pip && \
     pip3 install awscli==1.16.121 --root / --compile
+
+ADD install-packages.el .
+RUN chmod 755 install-packages.el
+RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
+RUN rm install-packages.el
 
 RUN wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.16.0/pmd-bin-6.16.0.zip && \
     unzip pmd-bin-6.16.0.zip && \

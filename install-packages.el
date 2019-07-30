@@ -22,3 +22,4 @@
 (package-install 'yaml-mode)
 (package-install 'scala-mode)
 (package-install 'sbt-mode)
+(package-install 'string-inflection)
