@@ -131,11 +131,11 @@ RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
 
 # TODO add hash sum verification
-RUN curl -L -o gradle4.zip https://services.gradle.org/distributions/gradle-4.2.1-bin.zip
-RUN unzip gradle4.zip && rm -f gradle4.zip && \
-    mv gradle-4.* /opt/ && \
-    ln -s /opt/gradle-4.* /opt/gradle-4 && \
-    ln -s /opt/gradle-4/bin/gradle /usr/local/bin/gradle;
+RUN curl -L -o gradle5.zip https://services.gradle.org/distributions/gradle-5.4.1-bin.zip
+RUN unzip gradle5.zip && rm -f gradle5.zip && \
+    mv gradle-5.* /opt/ && \
+    ln -s /opt/gradle-5.* /opt/gradle-5 && \
+    ln -s /opt/gradle-5/bin/gradle /usr/local/bin/gradle;
 
 ARG nodejs_version=8.7.0
 ENV nodejs_dir=node-v${nodejs_version}-linux-x64
