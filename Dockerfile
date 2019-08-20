@@ -39,6 +39,19 @@ RUN apt-get install -y python-pandas ipython
 RUN apt-get install -y pkg-config gcc libgmp-dev zlib1g-dev
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
+
+RUN apt-get update && sudo apt-get install -y apt-transport-https && \
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+        apt-key add - && \
+    echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
+        tee -a /etc/apt/sources.list.d/kubernetes.list && \
+    apt-get update && apt-get install -y kubectl=1.6.1-00 && \
+    apt-mark hold kubectl
+
+RUN apt-get install -y make
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    pip3 install awscli==1.16.121 --root / --compile
 RUN apt-file update
 
 RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
@@ -189,19 +202,6 @@ RUN chmod 755 /usr/local/bin/mdunwrap
 
 ADD get-maven-source.pl /usr/local/bin/get-maven-source
 RUN chmod 755 /usr/local/bin/get-maven-source
-
-RUN  apt-get update && sudo apt-get install -y apt-transport-https && \
-     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-         apt-key add - && \
-     echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
-         tee -a /etc/apt/sources.list.d/kubernetes.list && \
-     apt-get update && apt-get install -y kubectl=1.6.1-00 && \
-     apt-mark hold kubectl
-# TODO move to apt-get
-RUN apt-get install -y make
-RUN apt-get update && \
-    apt-get install -y python3-pip && \
-    pip3 install awscli==1.16.121 --root / --compile
 
 ADD install-packages.el .
 RUN chmod 755 install-packages.el
