@@ -18,7 +18,6 @@
 ;; (package-install 'purescript-mode)
 (package-install 'json-mode)
 (package-install 'jsonnet-mode)
-(package-install 'php-mode)
 (package-install 'yaml-mode)
 (package-install 'scala-mode)
 (package-install 'sbt-mode)
