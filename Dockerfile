@@ -215,6 +215,8 @@ RUN wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.16.0/pmd-
 ADD pmd.sh /usr/local/bin/pmd
 RUN chmod 755 /usr/local/bin/pmd
 
+RUN apt-get install -y tigervnc-standalone-server chromium
+RUN apt-get install -y openbox
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
-
