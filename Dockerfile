@@ -218,5 +218,7 @@ RUN chmod 755 /usr/local/bin/pmd
 RUN apt-get install -y tigervnc-standalone-server chromium
 RUN apt-get install -y openbox
 
+RUN cabal install --global regex-posix
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
