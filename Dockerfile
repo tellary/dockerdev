@@ -219,6 +219,8 @@ RUN apt-get install -y tigervnc-standalone-server chromium
 RUN apt-get install -y openbox
 
 RUN cabal install --global regex-posix
+RUN apt-get install -y libpcre3-dev
+RUN cabal install --global regex-pcre
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
