@@ -172,7 +172,7 @@ RUN EXPECTED_HASH=$( \
     rm nodejs_shasums256.txt.asc
 
 ADD plantuml /usr/local/bin/plantuml
-ADD plantuml.1.2017.19.jar /usr/local/bin/plantuml.jar
+ADD plantuml.1.2019.11.jar /usr/local/bin/plantuml.jar
 RUN chmod 755 /usr/local/bin/plantuml && \
     git clone https://github.com/jodonoghue/pandoc-plantuml-filter.git && \
     cd pandoc-plantuml-filter && \
