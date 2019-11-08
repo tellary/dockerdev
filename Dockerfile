@@ -223,6 +223,7 @@ RUN apt-get install -y libpcre3-dev
 RUN cabal install --global regex-pcre
 RUN cabal install --global regex-pcre
 RUN cabal install --global old-time
+RUN cabal install --global QuickCheck
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
