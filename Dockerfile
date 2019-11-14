@@ -225,5 +225,9 @@ RUN cabal install --global regex-pcre
 RUN cabal install --global old-time
 RUN cabal install --global QuickCheck
 
+RUN apt-get install -y netpbm
+
+RUN cabal install --global split
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
