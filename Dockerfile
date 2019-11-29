@@ -229,5 +229,7 @@ RUN apt-get install -y netpbm
 
 RUN cabal install --global split
 
+RUN cabal install --global pretty-simple
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
