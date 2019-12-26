@@ -7,5 +7,6 @@ DOCKER_OPTS="-it \
        -v $BASE_DIR/Downloads:/home/ilya/Downloads \
        -v $BASE_DIR/Desktop:/home/ilya/Desktop \
        -v $BASE_DIR/.ssh:/home/ilya/.ssh \
+       -v /Volumes/MacExtraDrive:/mnt/extra-drive \
        -e DISPLAY=host.docker.internal:0 \
        --security-opt seccomp:unconfined"
