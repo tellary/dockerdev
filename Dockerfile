@@ -228,8 +228,8 @@ RUN cabal install --global QuickCheck
 RUN apt-get install -y netpbm
 
 RUN cabal install --global split
-
 RUN cabal install --global pretty-simple
+RUN cabal install --global parsec
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
