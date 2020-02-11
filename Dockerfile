@@ -231,5 +231,12 @@ RUN cabal install --global split
 RUN cabal install --global pretty-simple
 RUN cabal install --global parsec
 
+# Re-use the `pandoc` installed with `--prefix /usr/local` above
+RUN cabal install --global pandoc
+
+RUN cabal install --global ini
+RUN cabal install --global optparse-generic
+RUN cabal install --global email-validate
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
