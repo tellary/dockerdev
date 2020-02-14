@@ -238,5 +238,12 @@ RUN cabal install --global ini
 RUN cabal install --global optparse-generic
 RUN cabal install --global email-validate
 
+RUN git clone https://github.com/tellary/tasktags.git && \
+    cd tasktags && \
+    git checkout bbc60858f61a73e694ca5a466905dacdc5432365 && \
+    cabal install --prefix /usr/local
+RUN rm -rf tasktags
+ADD .tasktags .
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
