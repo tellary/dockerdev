@@ -238,9 +238,11 @@ RUN cabal install --global ini
 RUN cabal install --global optparse-generic
 RUN cabal install --global email-validate
 
+RUN cabal install --global hspec
+
 RUN git clone https://github.com/tellary/tasktags.git && \
     cd tasktags && \
-    git checkout b5b57f68515c5532dde229390355f8b533005ea2 && \
+    git checkout a78c309193081eca6b8dbe540de6161914015097 && \
     cabal install --prefix /usr/local
 RUN rm -rf tasktags
 ADD .tasktags .
