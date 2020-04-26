@@ -247,5 +247,8 @@ RUN git clone https://github.com/tellary/tasktags.git && \
 RUN rm -rf tasktags
 ADD .tasktags .
 
+RUN cabal install --global stylish-haskell
+RUN cabal install --global reflection
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
