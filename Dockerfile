@@ -250,5 +250,14 @@ ADD .tasktags .
 RUN cabal install --global stylish-haskell
 RUN cabal install --global reflection
 
+RUN apt-get install -y sqlite3 libsqlite3-dev
+RUN cabal install --global sqlite-simple
+RUN cabal install --global HDBC HDBC-sqlite3
+RUN cabal install --global HaXml
+RUN cabal install --global HTTP
+RUN cabal install --global sqlite-simple
+RUN cabal install --global wreq
+RUN cabal install --global xml-conduit
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
