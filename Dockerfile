@@ -258,6 +258,11 @@ RUN cabal install --global HTTP
 RUN cabal install --global sqlite-simple
 RUN cabal install --global wreq
 RUN cabal install --global xml-conduit
+RUN cabal install --global tasty tasty-hunit
+RUN cabal install --global tasty-hspec
+RUN cabal install --global hunit-plus
+RUN cabal install --global refined
+RUN cabal install --global typenums
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
