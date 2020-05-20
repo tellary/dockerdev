@@ -240,13 +240,6 @@ RUN cabal install --global email-validate
 
 RUN cabal install --global hspec
 
-RUN git clone https://github.com/tellary/tasktags.git && \
-    cd tasktags && \
-    git checkout a78c309193081eca6b8dbe540de6161914015097 && \
-    cabal install --prefix /usr/local
-RUN rm -rf tasktags
-ADD .tasktags .
-
 RUN cabal install --global stylish-haskell
 RUN cabal install --global reflection
 
@@ -263,6 +256,19 @@ RUN cabal install --global tasty-hspec
 RUN cabal install --global hunit-plus
 RUN cabal install --global refined
 RUN cabal install --global typenums
+RUN cabal install --global servant-static-th
+
+RUN apt-get install -y lsof
+
+RUN cabal install --global unliftio
+RUN cabal install --global resource-pool
+
+RUN git clone https://github.com/tellary/tasktags.git && \
+    cd tasktags && \
+    git checkout f5cda3cdcd155590dc664ed401658d7d647fa378 && \
+    cabal install --prefix /usr/local
+RUN rm -rf tasktags
+ADD .tasktags .
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
