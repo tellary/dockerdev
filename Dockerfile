@@ -270,5 +270,19 @@ RUN git clone https://github.com/tellary/tasktags.git && \
 RUN rm -rf tasktags
 ADD .tasktags .
 
+RUN mkdir -p /home/${username}/.config/nix && \
+    echo "sandbox = false" > /home/${username}/.config/nix/nix.conf && \
+    chown -R ${username}.${username} /home/${username}/.config/nix && \
+    mkdir -m 0755 /nix && chown ${username}.${username} /nix && \
+    export NIX_RELEASE=2.3.4 && \
+    wget -O- "https://nixos.org/releases/nix/nix-$NIX_RELEASE/nix-$NIX_RELEASE-x86_64-linux.tar.xz" > nix.tar.xz && \
+    tar -xJvf nix.tar.xz && \
+    su ${username} -c nix-*-x86_64-linux/install && \
+    rm nix.tar.xz && rm -r nix-*-x86_64-linux
+
+ENV USER ${username}
+
+RUN su ${username} -c bash -l -c "nix-env -iA cachix -f https://cachix.org/api/v1/install"
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
