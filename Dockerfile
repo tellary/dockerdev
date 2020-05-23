@@ -282,7 +282,5 @@ RUN mkdir -p /home/${username}/.config/nix && \
 
 ENV USER ${username}
 
-RUN su ${username} -c bash -l -c "nix-env -iA cachix -f https://cachix.org/api/v1/install"
-
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
