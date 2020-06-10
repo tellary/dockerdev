@@ -16,5 +16,5 @@ else
 fi
 
 pandoc --quiet -f markdown+smart --standalone --mathjax \
-       --filter pandoc-plantuml-filter \
        -o $BASE.html $FILE 
+#       --filter pandoc-plantuml-filter \

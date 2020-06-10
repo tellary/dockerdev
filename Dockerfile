@@ -1,4 +1,4 @@
-FROM debian:9.4
+FROM debian:10.4
 
 ARG username=ilya
 ARG tz='US/Pacific'
@@ -62,21 +62,11 @@ RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
 
-RUN mkdir haskell-platform && curl -L -o haskell-platform/haskell-platform.tar.gz \
-    https://haskell.org/platform/download/8.2.2/haskell-platform-8.2.2-unknown-posix--core-x86_64.tar.gz
-RUN EXPECTED_HASH=bd01bf2b34ea3d91b1c82059197bb2e307e925e0cb308cb771df45c798632b58 \
-    ACTUAL_HASH=$(sha256sum haskell-platform/haskell-platform.tar.gz | cut -f 1 -d ' ') && \
-    [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
-    cd haskell-platform && \
-    tar xf haskell-platform.tar.gz && \
-    ./install-haskell-platform.sh && \
-    cd .. && rm -rf haskell-platform
-RUN sed -i \
-    's/"C compiler supports -no-pie","NO"/"C compiler supports -no-pie","YES"/g' \
-    /usr/local/haskell/ghc-8.2.2-x86_64/lib/ghc-8.2.2/settings
+RUN apt-get install -y haskell-platform
 
 RUN cabal update
-RUN cabal install --prefix /usr/local pandoc-2.1.3
+
+RUN apt-get install -y pandoc
 
 RUN useradd -m -s /bin/bash ${username}
 RUN usermod -aG sudo ${username}
@@ -93,36 +83,6 @@ ENV config_dir ${safeplace_dir}config/
 VOLUME ${safeplace_dir}
 
 WORKDIR ${user_dir}
-
-ADD .emacs .
-RUN chown ${username}.${username} .emacs
-
-RUN mkdir .emacs.d && chown ${username}.${username} .emacs.d
-ADD zenburn-theme.el .emacs.d/
-ADD cyrillic-dvorak.el .emacs.d/
-RUN chown ${username}.${username} .emacs.d/cyrillic-dvorak.el
-ADD drools-mode.el .emacs.d/
-RUN chown ${username}.${username} .emacs.d/drools-mode.el
-
-RUN mkdir -p ${projects_dir}meta-bindings && \
-    touch ${projects_dir}meta-bindings/meta-bindings.el && \
-    ln -s ${projects_dir}meta-bindings/meta-bindings.el \
-          .emacs.d/meta-bindings.el && \
-    mkdir -p ${projects_dir}myemacs && \
-    ln -s ${projects_dir}myemacs \
-          .emacs.d/myemacs
-
-RUN ln -s ${config_dir}.hunspell_en_US \
-          ${user_dir}.hunspell_en_US && \
-    ln -s ${config_dir}.hunspell_ru_RU \
-          ${user_dir}.hunspell_ru_RU && \
-    mkdir -p ${projects_dir}/myconfig && \
-    ln -s ${projects_dir}/myconfig/.gitignore \
-          ${user_dir}.gitignore && \
-    ln -s ${config_dir}.gitconfig \
-          ${user_dir}.gitconfig && \          
-    ln -s ${projects_dir}/myconfig/.ctags \
-          ${user_dir}.ctags
 
 ADD html /usr/local/bin
 RUN chmod 755 /usr/local/bin/html
@@ -173,14 +133,6 @@ RUN EXPECTED_HASH=$( \
 
 ADD plantuml /usr/local/bin/plantuml
 ADD plantuml.1.2019.11.jar /usr/local/bin/plantuml.jar
-RUN chmod 755 /usr/local/bin/plantuml && \
-    git clone https://github.com/jodonoghue/pandoc-plantuml-filter.git && \
-    cd pandoc-plantuml-filter && \
-    git checkout 7a7ddd614747e77f226be168cb3974c57ab6ec5d && \
-    sed -i 's/4.10/4.11/g' \
-        pandoc-plantuml-filter.cabal && \
-    cabal install --prefix /usr/local  && \
-    cd .. && rm -rf pandoc-plantuml-filter
 
 RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/download/v0.11.7/linux64.tar.gz && \
     tar xf linux64.tar.gz && \
@@ -203,11 +155,6 @@ RUN chmod 755 /usr/local/bin/mdunwrap
 ADD get-maven-source.pl /usr/local/bin/get-maven-source
 RUN chmod 755 /usr/local/bin/get-maven-source
 
-ADD install-packages.el .
-RUN chmod 755 install-packages.el
-RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
-RUN rm install-packages.el
-
 RUN wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.16.0/pmd-bin-6.16.0.zip && \
     unzip pmd-bin-6.16.0.zip && \
     mv pmd-bin-6.16.0 /opt && \
@@ -218,57 +165,21 @@ RUN chmod 755 /usr/local/bin/pmd
 RUN apt-get install -y tigervnc-standalone-server chromium
 RUN apt-get install -y openbox
 
-RUN cabal install --global regex-posix
-RUN apt-get install -y libpcre3-dev
-RUN cabal install --global regex-pcre
-RUN cabal install --global regex-pcre
-RUN cabal install --global old-time
-RUN cabal install --global QuickCheck
+RUN apt-get install -y libghc-regex-pcre-dev libghc-regex-posix-dev
+RUN apt-get install -y libghc-old-time-dev
+RUN apt-get install -y libghc-quickcheck2-dev
 
 RUN apt-get install -y netpbm
 
-RUN cabal install --global split
-RUN cabal install --global pretty-simple
-RUN cabal install --global parsec
-
-# Re-use the `pandoc` installed with `--prefix /usr/local` above
-RUN cabal install --global pandoc
-
-RUN cabal install --global ini
-RUN cabal install --global optparse-generic
-RUN cabal install --global email-validate
-
-RUN cabal install --global hspec
-
-RUN cabal install --global stylish-haskell
-RUN cabal install --global reflection
+RUN apt-get install -y libghc-split-dev libghc-pretty-simple-dev libghc-ini-dev
+RUN apt-get install -y libghc-email-validate-dev
+RUN apt-get install -y stylish-haskell
+RUN apt-get install -y libghc-reflection-dev
 
 RUN apt-get install -y sqlite3 libsqlite3-dev
-RUN cabal install --global sqlite-simple
-RUN cabal install --global HDBC HDBC-sqlite3
-RUN cabal install --global HaXml
-RUN cabal install --global HTTP
-RUN cabal install --global sqlite-simple
-RUN cabal install --global wreq
-RUN cabal install --global xml-conduit
-RUN cabal install --global tasty tasty-hunit
-RUN cabal install --global tasty-hspec
-RUN cabal install --global hunit-plus
-RUN cabal install --global refined
-RUN cabal install --global typenums
-RUN cabal install --global servant-static-th
+RUN apt-get install -y libghc-hdbc-dev libghc-hdbc-sqlite3-dev
 
 RUN apt-get install -y lsof
-
-RUN cabal install --global unliftio
-RUN cabal install --global resource-pool
-
-RUN git clone https://github.com/tellary/tasktags.git && \
-    cd tasktags && \
-    git checkout f5cda3cdcd155590dc664ed401658d7d647fa378 && \
-    cabal install --prefix /usr/local
-RUN rm -rf tasktags
-ADD .tasktags .
 
 RUN mkdir -p /home/${username}/.config/nix && \
     echo "sandbox = false" > /home/${username}/.config/nix/nix.conf && \
@@ -279,8 +190,73 @@ RUN mkdir -p /home/${username}/.config/nix && \
     tar -xJvf nix.tar.xz && \
     su ${username} -c nix-*-x86_64-linux/install && \
     rm nix.tar.xz && rm -r nix-*-x86_64-linux
+# TODO: VOLUME /nix
+
+RUN apt-get install -y libghc-pandoc-dev
+RUN apt-get install -y libghc-haxml-dev libghc-http-dev libghc-wreq-dev \
+    libghc-xml-conduit-dev libghc-resource-pool-dev
+
+RUN mkdir -p /root/.cabal/bin
+# For tasktags
+RUN cabal install --global ini-0.4.1
+
+RUN git clone https://github.com/tellary/tasktags.git && \
+    cd tasktags && \
+    git checkout 055ed35598161fc07f35b95fdc5e1e9e8375feab && \
+    cabal install --prefix /usr/local --constraint 'pandoc installed'
+RUN rm -rf tasktags
+ADD .tasktags .
+
+ADD .emacs .
+RUN chown ${username}.${username} .emacs
+
+RUN mkdir .emacs.d && chown ${username}.${username} .emacs.d
+ADD zenburn-theme.el .emacs.d/
+ADD cyrillic-dvorak.el .emacs.d/
+RUN chown ${username}.${username} .emacs.d/cyrillic-dvorak.el
+ADD drools-mode.el .emacs.d/
+RUN chown ${username}.${username} .emacs.d/drools-mode.el
+
+RUN mkdir -p ${projects_dir}meta-bindings && \
+    touch ${projects_dir}meta-bindings/meta-bindings.el && \
+    ln -s ${projects_dir}meta-bindings/meta-bindings.el \
+          .emacs.d/meta-bindings.el && \
+    mkdir -p ${projects_dir}myemacs && \
+    ln -s ${projects_dir}myemacs \
+          .emacs.d/myemacs
+
+RUN ln -s ${config_dir}.hunspell_en_US \
+          ${user_dir}.hunspell_en_US && \
+    ln -s ${config_dir}.hunspell_ru_RU \
+          ${user_dir}.hunspell_ru_RU && \
+    mkdir -p ${projects_dir}/myconfig && \
+    ln -s ${projects_dir}/myconfig/.gitignore \
+          ${user_dir}.gitignore && \
+    ln -s ${config_dir}.gitconfig \
+          ${user_dir}.gitconfig && \
+    ln -s ${projects_dir}/myconfig/.ctags \
+          ${user_dir}.ctags
+
+ADD install-packages.el .
+RUN chmod 755 install-packages.el
+RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
+RUN rm install-packages.el
 
 ENV USER ${username}
+
+# Use `cabal install` to maintain user Haskell package database
+# across containers like Gradle.
+# The volumes are still to be mounted when starting a container.
+RUN mkdir -p ${user_dir}.cabal
+RUN mkdir -p ${user_dir}.cabal/bin
+RUN mkdir -p ${user_dir}.ghc
+RUN mkdir -p ${user_dir}.gradle
+RUN chown -R ${username}.${username} ${user_dir}.cabal
+RUN chown -R ${username}.${username} ${user_dir}.ghc
+RUN chown -R ${username}.${username} ${user_dir}.gradle
+VOLUME ${user_dir}.cabal
+VOLUME ${user_dir}.ghc
+VOLUME ${user_dir}.gradle
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]

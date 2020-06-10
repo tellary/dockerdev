@@ -1,5 +1,3 @@
-(setq ispell-program-name "hunspell")
-
 (setenv "PAGER" "/bin/cat")
 (setenv "GIT_PAGER" "/bin/cat")
 (setenv "GIT_EDITOR" "emacsclient")
