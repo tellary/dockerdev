@@ -258,5 +258,9 @@ VOLUME ${user_dir}.cabal
 VOLUME ${user_dir}.ghc
 VOLUME ${user_dir}.gradle
 
+RUN apt-get install -y sysstat
+RUN apt-get install -y libbz2-dev
+RUN apt-get install -y libzip-dev
+
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
