@@ -262,6 +262,7 @@ RUN apt-get install -y sysstat
 RUN apt-get install -y libbz2-dev
 RUN apt-get install -y libzip-dev
 RUN apt-get install -y libblas-dev liblapack-dev
+RUN apt-get install -y libgsl-dev
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
