@@ -261,6 +261,7 @@ VOLUME ${user_dir}.gradle
 RUN apt-get install -y sysstat
 RUN apt-get install -y libbz2-dev
 RUN apt-get install -y libzip-dev
+RUN apt-get install -y libblas-dev liblapack-dev
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
