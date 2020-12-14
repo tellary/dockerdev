@@ -1,4 +1,4 @@
-FROM debian:10.4
+FROM debian:10
 
 ARG username=ilya
 ARG tz='US/Pacific'
@@ -34,7 +34,17 @@ RUN apt-get install -y \
     texlive-fonts-recommended
 RUN apt-get install -y \
     texlive-latex-recommended
-RUN apt-get install -y python-pandas ipython    
+RUN apt-get install -y python-pandas ipython
+RUN apt-get install -y python3-matplotlib python3-numpy python3-tk \
+                       python-mpltoolkits.basemap python3-scipy dvipng
+RUN apt-get install -y sysstat
+RUN apt-get install -y libbz2-dev
+RUN apt-get install -y libzip-dev
+RUN apt-get install -y libblas-dev liblapack-dev
+RUN apt-get install -y libgsl-dev
+RUN apt-get install -y apt-rdepends
+RUN apt-get install -y rsync
+
 # To make `cabal install` work.
 RUN apt-get install -y pkg-config gcc libgmp-dev zlib1g-dev
 # pinentry-curses doesn't work in emacs
@@ -62,11 +72,34 @@ RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
 
-RUN apt-get install -y haskell-platform
+RUN apt-get install -y haskell-platform haskell-platform-prof haskell-stack && \
+    stack upgrade
+RUN apt-get install -y cpphs
 
 RUN cabal update
 
-RUN apt-get install -y pandoc
+RUN apt-get install -y pandoc libghc-pandoc-dev
+RUN apt-get install -y libghc-haxml-dev libghc-http-dev libghc-wreq-dev \
+    libghc-xml-conduit-dev libghc-resource-pool-dev
+
+RUN apt-get install -y tigervnc-standalone-server chromium
+RUN apt-get install -y openbox
+
+RUN apt-get install -y libghc-regex-pcre-dev libghc-regex-posix-dev
+RUN apt-get install -y libghc-old-time-dev
+RUN apt-get install -y libghc-quickcheck2-dev
+
+RUN apt-get install -y netpbm
+
+RUN apt-get install -y libghc-split-dev libghc-pretty-simple-dev libghc-ini-dev
+RUN apt-get install -y libghc-email-validate-dev
+RUN apt-get install -y stylish-haskell
+RUN apt-get install -y libghc-reflection-dev
+
+RUN apt-get install -y sqlite3 libsqlite3-dev
+RUN apt-get install -y libghc-hdbc-dev libghc-hdbc-sqlite3-dev
+
+RUN apt-get install -y lsof
 
 RUN useradd -m -s /bin/bash ${username}
 RUN usermod -aG sudo ${username}
@@ -109,6 +142,17 @@ RUN unzip gradle5.zip && rm -f gradle5.zip && \
     mv gradle-5.* /opt/ && \
     ln -s /opt/gradle-5.* /opt/gradle-5 && \
     ln -s /opt/gradle-5/bin/gradle /usr/local/bin/gradle;
+
+RUN curl -L -o spark.tgz https://downloads.apache.org/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
+COPY spark.sha512 .
+RUN EXPECTED_HASH=$( cat spark.sha512 ) && \
+    ACTUAL_HASH=$(sha512sum spark.tgz | cut -f 1 -d ' ') && \
+    [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
+    mkdir spark && \
+    tar xf spark.tgz -C spark && \
+    mv spark/* /opt/spark && \
+    echo 'export PATH=$PATH:/opt/spark/bin' >> /etc/profile
+RUN rm -rf spark spark.tgz spark.sha512
 
 ARG nodejs_version=8.7.0
 ENV nodejs_dir=node-v${nodejs_version}-linux-x64
@@ -162,25 +206,6 @@ RUN wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.16.0/pmd-
 ADD pmd.sh /usr/local/bin/pmd
 RUN chmod 755 /usr/local/bin/pmd
 
-RUN apt-get install -y tigervnc-standalone-server chromium
-RUN apt-get install -y openbox
-
-RUN apt-get install -y libghc-regex-pcre-dev libghc-regex-posix-dev
-RUN apt-get install -y libghc-old-time-dev
-RUN apt-get install -y libghc-quickcheck2-dev
-
-RUN apt-get install -y netpbm
-
-RUN apt-get install -y libghc-split-dev libghc-pretty-simple-dev libghc-ini-dev
-RUN apt-get install -y libghc-email-validate-dev
-RUN apt-get install -y stylish-haskell
-RUN apt-get install -y libghc-reflection-dev
-
-RUN apt-get install -y sqlite3 libsqlite3-dev
-RUN apt-get install -y libghc-hdbc-dev libghc-hdbc-sqlite3-dev
-
-RUN apt-get install -y lsof
-
 RUN mkdir -p /home/${username}/.config/nix && \
     echo "sandbox = false" > /home/${username}/.config/nix/nix.conf && \
     chown -R ${username}.${username} /home/${username}/.config/nix && \
@@ -190,11 +215,8 @@ RUN mkdir -p /home/${username}/.config/nix && \
     tar -xJvf nix.tar.xz && \
     su ${username} -c nix-*-x86_64-linux/install && \
     rm nix.tar.xz && rm -r nix-*-x86_64-linux
-# TODO: VOLUME /nix
 
-RUN apt-get install -y libghc-pandoc-dev
-RUN apt-get install -y libghc-haxml-dev libghc-http-dev libghc-wreq-dev \
-    libghc-xml-conduit-dev libghc-resource-pool-dev
+VOLUME /nix
 
 RUN mkdir -p /root/.cabal/bin
 # For tasktags
@@ -257,12 +279,7 @@ RUN chown -R ${username}.${username} ${user_dir}.gradle
 VOLUME ${user_dir}.cabal
 VOLUME ${user_dir}.ghc
 VOLUME ${user_dir}.gradle
-
-RUN apt-get install -y sysstat
-RUN apt-get install -y libbz2-dev
-RUN apt-get install -y libzip-dev
-RUN apt-get install -y libblas-dev liblapack-dev
-RUN apt-get install -y libgsl-dev
+VOLUME ${user_dir}.stack
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
