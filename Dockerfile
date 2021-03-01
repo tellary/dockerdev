@@ -44,6 +44,7 @@ RUN apt-get install -y libblas-dev liblapack-dev
 RUN apt-get install -y libgsl-dev
 RUN apt-get install -y apt-rdepends
 RUN apt-get install -y rsync
+RUN apt-get install -y locate
 
 # To make `cabal install` work.
 RUN apt-get install -y pkg-config gcc libgmp-dev zlib1g-dev
@@ -143,16 +144,17 @@ RUN unzip gradle5.zip && rm -f gradle5.zip && \
     ln -s /opt/gradle-5.* /opt/gradle-5 && \
     ln -s /opt/gradle-5/bin/gradle /usr/local/bin/gradle;
 
-RUN curl -L -o spark.tgz https://downloads.apache.org/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
-COPY spark.sha512 .
-RUN EXPECTED_HASH=$( cat spark.sha512 ) && \
-    ACTUAL_HASH=$(sha512sum spark.tgz | cut -f 1 -d ' ') && \
-    [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
-    mkdir spark && \
-    tar xf spark.tgz -C spark && \
-    mv spark/* /opt/spark && \
-    echo 'export PATH=$PATH:/opt/spark/bin' >> /etc/profile
-RUN rm -rf spark spark.tgz spark.sha512
+# It didn't pass the hash-sum check last time
+# RUN curl -L -o spark.tgz https://downloads.apache.org/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
+# COPY spark.sha512 .
+# RUN EXPECTED_HASH=$( cat spark.sha512 ) && \
+#     ACTUAL_HASH=$(sha512sum spark.tgz | cut -f 1 -d ' ') && \
+#     [ $EXPECTED_HASH = $ACTUAL_HASH ] && \
+#     mkdir spark && \
+#     tar xf spark.tgz -C spark && \
+#     mv spark/* /opt/spark && \
+#     echo 'export PATH=$PATH:/opt/spark/bin' >> /etc/profile
+# RUN rm -rf spark spark.tgz spark.sha512
 
 ARG nodejs_version=8.7.0
 ENV nodejs_dir=node-v${nodejs_version}-linux-x64
@@ -263,6 +265,11 @@ ADD install-packages.el .
 RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
+
+# I don't want to place Stack cache on an an image
+# RUN git clone https://github.com/tellary/anki-md.git && \
+#     cd anki-md && \
+#     bash install.sh
 
 ENV USER ${username}
 
