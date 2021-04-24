@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:10.9
 
 ARG username=ilya
 ARG tz='US/Pacific'
@@ -178,22 +178,13 @@ RUN EXPECTED_HASH=$( \
     rm nodejs_shasums256.txt.asc
 
 ADD plantuml /usr/local/bin/plantuml
+RUN chmod 755 /usr/local/bin/plantuml
 ADD plantuml.1.2019.11.jar /usr/local/bin/plantuml.jar
-
-RUN curl -L -o linux64.tar.gz https://github.com/purescript/purescript/releases/download/v0.11.7/linux64.tar.gz && \
-    tar xf linux64.tar.gz && \
-    mv purescript/purs /usr/local/bin && \
-    npm install -g --prefix /usr/local pulp bower && \
-    rm -rf purescript && rm linux64.tar.gz
 
 COPY ssh-agent.sh /etc/profile.d/
 
 ADD findtags /usr/local/bin
 RUN chmod 755 /usr/local/bin/findtags
-
-RUN sudo npm install -global markdown2confluence
-ADD conf /usr/local/bin
-RUN chmod 755 /usr/local/bin/conf
 
 ADD mdunwrap /usr/local/bin
 RUN chmod 755 /usr/local/bin/mdunwrap
@@ -266,10 +257,15 @@ RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
 
-# I don't want to place Stack cache on an an image
-# RUN git clone https://github.com/tellary/anki-md.git && \
-#     cd anki-md && \
-#     bash install.sh
+RUN git clone https://github.com/tellary/anki-md.git && \
+    cd anki-md && \
+    bash install.sh
+
+RUN git clone https://github.com/tellary/pandoc-plantuml-filter.git && \
+    cd pandoc-plantuml-filter && \
+    stack build  && \
+    cp $(stack path --local-install-root)/bin/pandoc-plantuml-filter /usr/local/bin && \
+    cd .. && rm -rf pandoc-plantuml-filter
 
 ENV USER ${username}
 
@@ -287,6 +283,8 @@ VOLUME ${user_dir}.cabal
 VOLUME ${user_dir}.ghc
 VOLUME ${user_dir}.gradle
 VOLUME ${user_dir}.stack
+
+# TODO: should I clean up root stack caches after the build is complete?
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
