@@ -17,5 +17,6 @@ fi
 
 pandoc --quiet -f markdown+smart --standalone --mathjax \
        --variable=geometry:a4paper,margin=2cm \
+       --filter pandoc-plantuml-filter \
        -o $BASE.pdf $FILE 
-#       --filter pandoc-plantuml-filter \
+

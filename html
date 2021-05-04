@@ -17,5 +17,6 @@ fi
 
 pandoc --quiet -f markdown+smart --standalone \
        --mathjax=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?config=TeX-AMS_CHTML-full \
+       --filter pandoc-plantuml-filter \
        -o $BASE.html $FILE 
-#       --filter pandoc-plantuml-filter \
+
