@@ -1,4 +1,4 @@
-FROM debian:10.9
+FROM debian:buster-20210511 AS haskell-stack
 
 ARG username=ilya
 ARG tz='US/Pacific'
@@ -6,8 +6,53 @@ ARG tz='US/Pacific'
 RUN sed -i 's/main/main contrib/' /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get upgrade -y
+RUN apt-get install -y git git-doc git-man
+RUN apt-get install -y haskell-stack
+RUN stack upgrade
+
+# To make `cabal install` work.
+# Also, zlib is required to build the `digest` Haskell package
+RUN apt-get install -y pkg-config gcc libgmp-dev zlib1g-dev
+
+# The main reason to have separate `haskell-builds` stage is to avoid
+# interference between the "main" stage and `haskell-builds`:
+# I don't want to rebuild anything under `haskell-builds` due to a change in the
+# "main" stage, and vice versa.
+FROM haskell-stack AS haskell-builds
+
+RUN mkdir artifacts
+
+RUN git clone https://github.com/tellary/tasktags.git && \
+    cd tasktags && \
+    git checkout 9fd14ed3bc5ed00371732fab1b517939653644c7 && \
+    stack setup
+RUN cd tasktags && stack build --flag tasktags:release
+RUN cd tasktags && \
+    cp $(stack path --local-install-root)/bin/keepToMd /artifacts && \
+    cp $(stack path --local-install-root)/bin/togglCsv /artifacts && \
+    cp $(stack path --local-install-root)/bin/togglSubmit /artifacts && \
+    cd .. && rm -rf tasktags
+
+RUN git clone https://github.com/tellary/anki-md.git && \
+    cd anki-md && \
+    stack setup
+RUN cd anki-md && stack build
+RUN cd anki-md && \
+    cp $(stack path --local-install-root)/bin/ankiMd /artifacts && \
+    cd .. && rm -rf anki-md
+
+RUN git clone https://github.com/tellary/pandoc-plantuml-filter.git && \
+    cd pandoc-plantuml-filter && \
+    stack setup
+RUN cd pandoc-plantuml-filter && stack build
+RUN cd pandoc-plantuml-filter && \
+    cp $(stack path --local-install-root)/bin/pandoc-plantuml-filter /artifacts && \
+    cd .. && rm -rf pandoc-plantuml-filter
+
+FROM haskell-stack
+
 RUN apt-get install -y \
-    python git git-doc git-man \
+    python \
     gnupg2 \
     emacs-nox emacs-goodies-el \
     less vim \
@@ -15,6 +60,7 @@ RUN apt-get install -y \
     typespeed \
     hunspell hunspell-ru hunspell-en-us \
     libdatetime-perl libdatetime-format-strptime-perl
+
 RUN apt-get install -y \    
     apg \
     locales \
@@ -46,8 +92,6 @@ RUN apt-get install -y apt-rdepends
 RUN apt-get install -y rsync
 RUN apt-get install -y locate
 
-# To make `cabal install` work.
-RUN apt-get install -y pkg-config gcc libgmp-dev zlib1g-dev
 # pinentry-curses doesn't work in emacs
 RUN apt-get remove -y pinentry-curses
 
@@ -73,8 +117,7 @@ RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
 RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
 
-RUN apt-get install -y haskell-platform haskell-platform-prof haskell-stack && \
-    stack upgrade
+RUN apt-get install -y haskell-platform haskell-platform-prof haskell-stack
 RUN apt-get install -y cpphs
 
 RUN cabal update
@@ -211,17 +254,6 @@ RUN mkdir -p /home/${username}/.config/nix && \
 
 VOLUME /nix
 
-RUN mkdir -p /root/.cabal/bin
-# For tasktags
-RUN cabal install --global ini-0.4.1
-
-RUN git clone https://github.com/tellary/tasktags.git && \
-    cd tasktags && \
-    git checkout 055ed35598161fc07f35b95fdc5e1e9e8375feab && \
-    cabal install --prefix /usr/local --constraint 'pandoc installed'
-RUN rm -rf tasktags
-ADD .tasktags .
-
 ADD .emacs .
 RUN chown ${username}.${username} .emacs
 
@@ -250,22 +282,15 @@ RUN ln -s ${config_dir}.hunspell_en_US \
     ln -s ${config_dir}.gitconfig \
           ${user_dir}.gitconfig && \
     ln -s ${projects_dir}/myconfig/.ctags \
-          ${user_dir}.ctags
-
+          ${user_dir}.ctags && \
+    ln -s ${config_dir}.tasktags \
+          ${user_dir}.tasktags
 ADD install-packages.el .
 RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
 
-RUN git clone https://github.com/tellary/anki-md.git && \
-    cd anki-md && \
-    bash install.sh
-
-RUN git clone https://github.com/tellary/pandoc-plantuml-filter.git && \
-    cd pandoc-plantuml-filter && \
-    stack build  && \
-    cp $(stack path --local-install-root)/bin/pandoc-plantuml-filter /usr/local/bin && \
-    cd .. && rm -rf pandoc-plantuml-filter
+COPY --from=haskell-builds /artifacts/* /usr/local/bin
 
 ENV USER ${username}
 
@@ -283,8 +308,6 @@ VOLUME ${user_dir}.cabal
 VOLUME ${user_dir}.ghc
 VOLUME ${user_dir}.gradle
 VOLUME ${user_dir}.stack
-
-# TODO: should I clean up root stack caches after the build is complete?
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["-l"]
