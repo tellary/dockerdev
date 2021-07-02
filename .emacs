@@ -3,9 +3,6 @@
 (setenv "GIT_EDITOR" "emacsclient")
 (add-to-list 'exec-path "~/bin" t)
 
-;; Load meta-bindings
-(load "~/.emacs.d/meta-bindings.el")
-
 (add-to-list 'load-path "~/.emacs.d/myemacs")
 (load "myemacs")
 

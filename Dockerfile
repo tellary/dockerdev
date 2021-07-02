@@ -242,17 +242,8 @@ ADD .emacs .
 RUN chown ${username}.${username} .emacs
 
 RUN mkdir .emacs.d && chown ${username}.${username} .emacs.d
-ADD zenburn-theme.el .emacs.d/
-ADD cyrillic-dvorak.el .emacs.d/
-RUN chown ${username}.${username} .emacs.d/cyrillic-dvorak.el
-ADD drools-mode.el .emacs.d/
-RUN chown ${username}.${username} .emacs.d/drools-mode.el
 
-RUN mkdir -p ${projects_dir}meta-bindings && \
-    touch ${projects_dir}meta-bindings/meta-bindings.el && \
-    ln -s ${projects_dir}meta-bindings/meta-bindings.el \
-          .emacs.d/meta-bindings.el && \
-    mkdir -p ${projects_dir}myemacs && \
+RUN mkdir -p ${projects_dir}myemacs && \
     ln -s ${projects_dir}myemacs \
           .emacs.d/myemacs
 
