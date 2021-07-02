@@ -168,24 +168,8 @@ RUN chmod 755 /usr/local/bin/pdf
 
 RUN echo export TERM=xterm-256color >> /home/${username}/.profile
 
-ADD jdk8.tar.gz .
-RUN mv jdk1.8.* /opt/ && \
-    ln -s /opt/jdk1.8.* /opt/jdk1.8 && \
-    ls /opt/jdk1.8/bin | \
-        while read file; \
-        do \
-            ln -s /opt/jdk1.8/bin/$file /usr/local/bin/$file; \
-        done;
-
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/${tz} /etc/localtime
-
-# TODO add hash sum verification
-RUN curl -L -o gradle5.zip https://services.gradle.org/distributions/gradle-5.4.1-bin.zip
-RUN unzip gradle5.zip && rm -f gradle5.zip && \
-    mv gradle-5.* /opt/ && \
-    ln -s /opt/gradle-5.* /opt/gradle-5 && \
-    ln -s /opt/gradle-5/bin/gradle /usr/local/bin/gradle;
 
 # It didn't pass the hash-sum check last time
 # RUN curl -L -o spark.tgz https://downloads.apache.org/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
@@ -289,6 +273,24 @@ ADD install-packages.el .
 RUN chmod 755 install-packages.el
 RUN su ${username} -c "emacs --script /home/${username}/install-packages.el"
 RUN rm install-packages.el
+
+# ADD jdk8.tar.gz .
+# RUN mv jdk1.8.* /opt/ && \
+#     ln -s /opt/jdk1.8.* /opt/jdk1.8
+ADD jdk11.tar.gz .
+RUN mv jdk-11* /opt/ && \
+    ln -s /opt/jdk-11* /opt/jdk11 && \
+    ls /opt/jdk11/bin | \
+        while read file; \
+        do \
+            ln -s /opt/jdk11/bin/$file /usr/local/bin/$file; \
+        done;
+# TODO add hash sum verification
+RUN curl -L -o gradle7.zip https://services.gradle.org/distributions/gradle-7.1-bin.zip
+RUN unzip gradle7.zip && rm -f gradle7.zip && \
+    mv gradle-7.* /opt/ && \
+    ln -s /opt/gradle-7.* /opt/gradle-7 && \
+    ln -s /opt/gradle-7/bin/gradle /usr/local/bin/gradle;
 
 COPY --from=haskell-builds /artifacts/* /usr/local/bin
 
