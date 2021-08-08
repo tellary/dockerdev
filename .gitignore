@@ -1,4 +1,4 @@
-jdk8.tar.gz
+jdk*.tar.gz
 gradle4.zip
 *.use
 *~
