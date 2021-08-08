@@ -8,4 +8,5 @@ DOCKER_OPTS="$DOCKER_OPTS \
        -v dot-cabal:/home/ilya/.cabal \
        -v dot-ghc:/home/ilya/.ghc \
        -v dot-stack:/home/ilya/.stack \
+       -v dot-local:/home/ilya/.local \
        -u ilya"
