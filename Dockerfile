@@ -49,29 +49,6 @@ RUN cd pandoc-plantuml-filter && \
     cp $(stack path --local-install-root)/bin/pandoc-plantuml-filter /artifacts && \
     cd .. && rm -rf pandoc-plantuml-filter
 
-# TODO: rename to agda
-FROM haskell-stack AS plfa
-
-# TODO: Move this to haskell-stack as well as a copy below
-RUN apt-get install -y locales libncurses-dev
-RUN echo 'en_US.UTF-8 UTF-8 ' >> /etc/locale.gen
-RUN locale-gen
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-RUN echo 'export LANG=en_US.UTF-8 ' >> /etc/profile
-RUN echo 'export LC_ALL=en_US.UTF-8 ' >> /etc/profile
-RUN echo 'export LANGUAGE=en_US.UTF-8 ' >> /etc/profile
-
-RUN git clone https://github.com/agda/agda.git
-RUN cd agda && \
-    git checkout v2.6.1.1 && \
-    stack setup --stack-yaml stack-8.10.2.yaml
-RUN cd agda && stack install --stack-yaml stack-8.10.2.yaml
-
-# RUN git clone --recurse-submodules https://github.com/plfa/plfa.github.io plfa
-# RUN cd plfa/standard-library && git checkout v1.3
-# RUN ln -s ${config_dir}agda ${user_dir}.agda
-
 FROM haskell-stack
 
 RUN apt-get install -y \
@@ -307,7 +284,8 @@ RUN unzip gradle7.zip && rm -f gradle7.zip && \
     ln -s /opt/gradle-7/bin/gradle /usr/local/bin/gradle;
 
 COPY --from=haskell-builds /artifacts/* /usr/local/bin
-COPY --from=plfa /root/.local/bin/agda* /usr/local/bin
+
+RUN ln -s ${config_dir}agda ${user_dir}.agda
 
 ENV USER ${username}
 
